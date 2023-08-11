@@ -1,0 +1,33 @@
+### get shopping items
+GET http://localhost:8081/shopping-items
+
+### create item
+POST http://localhost:8081/shopping-items
+Content-Type: "application/json"
+
+{
+    "name": "Pasta"
+}
+
+### get movies
+GET http://localhost:8080/server2/movies
+
+### create movie
+POST http://localhost:8082/server2/movies
+Content-Type: "application/json"
+
+{
+    "title": "Jesse in the Jungle"
+}
+
+### sending request to reverseProxy
+GET http://localhost:8080/server1/shopping-items
+
+### create item through reverseProxy
+POST http://localhost:8080/server1/shopping-items
+Content-Type: "application/json"
+
+{
+    "name": "Pasta"
+}
+

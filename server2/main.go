@@ -1,7 +1,9 @@
-package server2
+package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -22,11 +24,13 @@ type Director struct {
 }
 
 func SetUpHandlers(mux *mux.Router) {
-	mux.HandleFunc("/movies", getMovies).Methods("GET")
-	mux.HandleFunc("/movies/{id}", getMovie).Methods("GET")
-	mux.HandleFunc("/movies", createMovie).Methods("POST")
-	mux.HandleFunc("/movies/{id}", updateMovie).Methods("PUT")
-	mux.HandleFunc("/movies/{id}", deleteMovie).Methods("DELETE")
+	fmt.Println("Starting Server2...")
+	parentURL := "/server2"
+	mux.HandleFunc(parentURL + "/movies", getMovies).Methods("GET")
+	mux.HandleFunc(parentURL + "/movies/{id}", getMovie).Methods("GET")
+	mux.HandleFunc(parentURL + "/movies", createMovie).Methods("POST")
+	mux.HandleFunc(parentURL + "/movies/{id}", updateMovie).Methods("PUT")
+	mux.HandleFunc(parentURL + "/movies/{id}", deleteMovie).Methods("DELETE")
 }
 
 var movies []Movie
@@ -62,6 +66,7 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 }
 
 func createMovie(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Host, r.URL.Host, r.URL.Scheme)
 	w.Header().Set("Content-Type", "application/json")
 	var movie Movie
 	_ = json.NewDecoder(r.Body).Decode(&movie)
@@ -86,4 +91,11 @@ func updateMovie(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+
+func main(){
+	router2 := mux.NewRouter()
+	SetUpHandlers(router2)
+	log.Fatal(http.ListenAndServe(":8082", router2))
 }
