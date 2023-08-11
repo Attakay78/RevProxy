@@ -1,7 +1,9 @@
-package server1
+package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -18,19 +20,21 @@ type Server struct{
 	shoppingItems []Item
 }
 
-func NewServer() *Server{
+func newServer() *Server{
 	s := &Server{
 		Router: mux.NewRouter(),
 		shoppingItems: []Item{},
 	}
 	s.routes()
+	fmt.Println("Starting server1....")
 	return s
 }
 
 func (s *Server) routes(){
-	s.HandleFunc("/shopping-items", s.listShoppingItems()).Methods("GET")
-	s.HandleFunc("/shopping-items", s.createShoppingItem()).Methods("POST")
-	s.HandleFunc("/shopping-items/{id}", s.removeShoppingItem()).Methods("DELETE")
+	parentURL := "/server1"
+	s.HandleFunc(parentURL + "/shopping-items", s.listShoppingItems()).Methods("GET")
+	s.HandleFunc(parentURL + "/shopping-items", s.createShoppingItem()).Methods("POST")
+	s.HandleFunc(parentURL + "/shopping-items/{id}", s.removeShoppingItem()).Methods("DELETE")
 }
 
 func (s *Server) createShoppingItem() http.HandlerFunc {
@@ -78,4 +82,10 @@ func (s *Server) removeShoppingItem() http.HandlerFunc{
 			}
 		}
 	}
+}
+
+
+func main(){
+	server1 := newServer()
+	log.Fatal(http.ListenAndServe(":8081", server1))
 }
